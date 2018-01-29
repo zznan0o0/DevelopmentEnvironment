@@ -1,0 +1,20 @@
+﻿
+如何使用远程挂载同步文件
+
+
+1. 在Web服务器上创建目录
+mkdir /var/www/html/laravel5/public/img/img_layer
+
+2. 在运算服务器上远程挂载目录
+sudo sshfs bzg@192.168.10.161:/var/www/html/laravel5/public/img/img_layer /home/kenshin/project/golang/server/public/layer/img_layer
+
+3. 在运算服务器上将图片拷贝进远程目录
+cp ./aaa.png /home/kenshin/project/golang/server/public/layer/img_layer
+
+
+4. 卸载远程目录：
+sudo umount -v /home/kenshin/project/golang/server/public/layer/img_layer
+
+
+
+

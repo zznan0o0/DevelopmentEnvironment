@@ -1,0 +1,14 @@
+
+
+
+让VMware中的各个虚拟机在后台运行，可以避免因为窗口假死造成的虚拟机死机。
+
+
+1.用VNC启动VMware，并启动其中的虚拟机后，关闭每个虚拟机的窗口，选择“run in background"。
+
+2。关闭VMware workstation.
+
+3. 在服务上关闭VNCserver:
+./vncserver -kill :1
+
+4. 此时，仍然可以正常的使用各个虚拟机。

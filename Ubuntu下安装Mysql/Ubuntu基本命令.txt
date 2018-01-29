@@ -1,0 +1,9 @@
+tree gocode查看树结构文件gocode
+chmod -R 777 gocode/   文件夹gocode放开权限
+./vncserver 执行一个进程回车
+wget 执行下载
+mkdir 创建文件，后面跟文件夹的名字
+
+使用rm命令直接删除所有的文件即可。rm -f *或者rm -f * . 
+
+

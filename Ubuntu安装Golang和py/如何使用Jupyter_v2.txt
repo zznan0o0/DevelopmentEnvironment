@@ -1,0 +1,38 @@
+
+如何使用Jupyter
+
+
+
+1.首先要安装好Anaconda，然后以普通用户运行如下命令：
+$/home/user/anaconda3/bin/jupyter notebook --ip="*"
+说明：启动jupyter服务，允许任何IP的客户机访问。
+
+运行后，会打印如下信息：
+  http://localhost:8888/?token=86ed87f60faec274a25d8733492c5ab4ffd56a30932e452d
+
+
+
+2.在Windows中打开浏览器，将上面这行信息复制并粘贴到浏览器中。
+  http://localhost:8888/?token=86ed87f60faec274a25d8733492c5ab4ffd56a30932e452d
+
+然后将localhost替换为jupyter所在的主机IP。例如：
+  http://192.168.10.174:8888/?token=86ed87f60faec274a25d8733492c5ab4ffd56a30932e452d
+
+这时，就可以在windows的浏览器中看到jupyter页面。之后就可以写程序，运行程序了。
+
+
+
+3. Jupyter中的快捷键
+
+ctrl + s  保存
+ctrl + x  剪切
+shift + enter 执行程序（有下一步的对话框出来）
+ctrl + enter 执行程序（没有下一步的对话框出来）
+
+
+
+
+
+
+
+

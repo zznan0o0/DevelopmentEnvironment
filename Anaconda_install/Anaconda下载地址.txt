@@ -1,0 +1,13 @@
+
+Anacondaœ¬‘ÿµÿ÷∑
+
+
+https://www.anaconda.com/download/#download
+
+
+https://repo.continuum.io/archive/Anaconda3-4.4.0-Linux-x86_64.sh
+
+
+https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh
+
+

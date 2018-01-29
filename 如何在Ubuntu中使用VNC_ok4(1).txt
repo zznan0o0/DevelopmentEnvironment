@@ -1,0 +1,189 @@
+
+如何在Ubuntu中使用Xvnc
+
+
+1. 安装相关的包
+apt-get update -y
+apt-get install -y ubuntu-gnome-desktop
+apt-get install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+apt-get install -y gdm
+
+
+下面这些都可以不用安装：
+==============================================
+apt-get install -y ubuntu-gnome-desktop
+apt-get install -y gnome-panel gnome-settings-daemon metacity nautilus gnome-terminal
+apt-get install -y gdm
+apt-get install -y ubuntu-desktop
+apt-get install -y gnome
+apt-get install -y gnome*
+apt-get install -y gnome-core
+apt-get install -y x-org
+apt-get install -y x-window
+apt-get install -y x-window*
+apt-get install -y x-window-system
+apt-get install -y x-window-manager
+apt-get install -y x-window-system-core
+# apt-get install -y libXfont*
+# apt-get install -y xfce4-panel
+# apt-get install -y xfwm4
+# sudo apt-get purge ubuntu-default-settings
+==============================================
+
+
+
+2. 下载tigerVNC
+从www.tigervnc.org找到链接，直接下载Linux下的二进制可执行文件，不用安装。
+https://bintray.com/tigervnc/stable/download_file?file_path=tigervnc-1.8.0.x86_64.tar.gz
+
+相关网址：
+http://tigervnc.org/
+https://bintray.com/tigervnc/stable/tigervnc/1.8.0
+
+
+
+3. 配置/root/.vnc/xstartup
+============================
+# Uncomment the following two lines for normal desktop:
+# unset SESSION_MANAGER
+# exec /etc/X11/xinit/xinitrc
+
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+xsetroot -solid grey
+vncconfig -iconic &
+x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &
+x-window-manager &
+
+gnome-panel &
+gnome-settings-daemon &
+metacity &
+nautilus &
+
+
+
+4. 启动VNC server
+./vncserver
+
+
+5. 在windows中用vncviwer访问vnc server
+打开vncviwer，输入121.196.219.195:1
+
+
+6. 关闭vnc server
+./vncserver -kill :1
+
+注：kill后面的1表示端口1，每次启动VNC server时这个端口号不一样。kill与冒号之间必须有个空格，否则执行会失败。
+
+
+==========================================
+
+
+
+
+如何在Ubuntu中安装VNC
+v2
+
+
+
+环境：Ubuntu 16.04_64bits
+===============================
+
+
+
+安装x11, gnome, 和vnc4server
+===============================
+用root用户安装并启动VNC server,否则以普通用户启动的话只能看到Terminal看不到桌面。
+apt-get update
+apt-get install -y ubuntu-desktop
+apt-get install -y gnome-core
+apt-get install -y x-window-system-core
+apt-get install -y gdm
+apt-get install -y xfce4-panel
+apt-get install -y xfwm4
+apt-get install vnc4server
+
+
+
+修改VNC server启动的配置文件xstartup
+===============================
+把~/.vnc/xstartup文件修改为如下内容，否则会出现灰屏的问题：
+#!/bin/sh
+# Uncomment the following two lines for normal desktop:  
+unset SESSION_MANAGER  
+unset DBUS_SESSION_BUS_ADDRESS    
+# 上面这句话在XUbuntu桌面环境下开启vnc的话最好取消注释  
+#exec /etc/X11/xinit/xinitrc  
+#上面这行先不要打开  
+[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup  
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources  
+xsetroot -solid grey  
+vncconfig -iconic &  
+x-terminal-emulator -geometry 80x24+10+10 -ls -title "$VNCDESKTOP Desktop" &  
+#gnome-session &  
+#x-window-manager &  
+#下面这块主要是针对运用xfce4管理桌面  
+x-session-manager & xfdesktop & xfce4-panel &  
+xfce4-menu-plugin &  
+xfsettingsd &  
+xfconfd &  
+xfwm4 & 
+
+
+
+启动VNC server
+===============================
+以root用户在shell中执行命令vnc4server，会有如下提示：
+# vnc4server
+New 'ubuntu:2 (root)' desktop is ubuntu:2
+
+Starting applications specified in /root/.vnc/xstartup
+Log file is /root/.vnc/ubuntu:2.log
+
+第一次运行时还会提示输入VNC登录的密码。
+这里的ubuntu:2表示VNC登录时的端口号为2。
+
+
+
+关闭防火墙
+===============================
+ufw disable
+
+
+
+如果用阿里云主机，需要打开外部访问的端口限制
+===============================
+授权策略	协议类型	端口范围	授权类型	授权对象	描述	优先级	创建时间	操作
+允许	        全部	        -1/-1	        地址段访问	0.0.0.0/0       -       1	2017-08-24 11:23:15
+
+
+
+在windows端用vnc viewer登录
+===============================
+打开vncviewer.exe，在VNC Server栏输入：192.168.18.5:2
+其中192.168.18.5是VNC server所在主机的IP，2是VNC的端口号。
+点击Connect按钮后，会提示输入VNC登录密码，就是在Linux中启动vnc4server时设置的密码。
+
+
+停止
+===============================
+vnc4server -kill :1
+关闭了端口号为1的VNC server。
+注意：在kill和冒号之间一定要有一个空格，否则并没有停止这个进程。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

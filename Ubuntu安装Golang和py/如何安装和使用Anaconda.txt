@@ -1,0 +1,23 @@
+
+如何安装和使用Anaconda
+
+
+下载
+Linux-64bits-python3//我们选择安装3
+wget https://repo.continuum.io/archive/Anaconda3-4.4.0-Linux-x86_64.sh &
+
+Linux-64bits-python2
+wget https://repo.continuum.io/archive/Anaconda2-4.4.0-Linux-x86_64.sh &
+
+下载页面：
+https://www.anaconda.com/download/
+
+
+安装
+bash ~/Downloads/Anaconda3-4.4.0-Linux-x86_64.sh
+
+
+使用
+~/anaconda3/bin/python3 1test.py 
+
+

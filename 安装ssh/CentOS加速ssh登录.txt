@@ -1,0 +1,12 @@
+关闭UseDNS加速SSH登录
+一、编辑文件
+vim /etc/ssh/sshd_config
+
+二、找到以下字符
+#UseDNS yes
+
+在其下方新建一行，填入
+UseDNS no
+
+三、保存并重启SSH
+service sshd restart

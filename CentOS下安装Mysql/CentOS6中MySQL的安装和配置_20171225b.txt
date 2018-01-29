@@ -1,0 +1,318 @@
+
+CentOS6中MySQL的安装和配置
+
+
+
+1、安装
+yum install -y mysql-server mysql
+
+2、配置
+（1）设置默认字符和引擎
+Ubuntu中在目录：/etc/mysql/my.cnf
+CentOS中在目录：/etc/my.cnf
+首先修改文件/etc/my.cnf，在文件末尾添加如下内容：
+[mysqld]
+character-set-server=utf8
+collation-server=utf8_general_ci
+
+[client]
+default-character-set=utf8
+
+[mysql]
+no-auto-rehash
+default-character-set=utf8
+
+重启mysql服务：service mysqld restart
+
+进入mysql后，查看字符集：
+show variables like "%char%"
+show full columns from P_Yuanpian_Order_Item;
+
+
+3、启动和关闭
+service mysqld restart
+chkconfig mysqld on
+
+
+4. 设置mysql的root用户的密码
+# mysqladmin -u root password 'root'
+
+
+5. 登录mysql
+# mysql -uroot -p
+Enter password:
+然后输入密码。
+
+     
+6、开放远程连接
+（1）允许mysql用户root(密码为root)能远程访问，设置如下：
+        首先进入MySQL
+        GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;
+        FLUSH PRIVILEGES;
+
+    允许myuser使用mypassword从任何主机连接到mysql服务器的话:
+        GRANT ALL PRIVILEGES ON *.* TO 'myuser'@'%' IDENTIFIED BY 'mypassword' WITH GRANT OPTION;
+        FLUSH PRIVILEGES;
+
+
+（2）远程连接错误：ERROR 2003 (HY000): Can't connect to MySQL server on '192.168.6.61' (111)
+
+原因：mysql限定只接受127.0.0.1的连接。
+
+解决办法：
+    第一步：修改配置文件/etc/mysql/mysql.conf.d/mysqld.cnf，将下面这行注释掉：
+#bind-address		= 127.0.0.1
+同时查看mysql的全局配置文件：/etc/mysql/my.cnf，看看还有没有其它配置影响远程访问。
+    第二步：重启mysql服务：/etc/init.d/mysql restart
+
+
+
+7. 解决远程连接慢的问题
+修改my.cnf文件，在[mysqld]这一节下添加一行如下：
+[mysqld]
+skip-name-resolve
+
+注：CentOS中my.cnf文件在/etc/my.cnf，Ubuntu中文件在/etc/mysql/my.cnf
+加上skip-name-resolve后，登录本机不能用localhost了而要用127.0.0.1登录。
+
+
+
+8. MySQL建表语句：
+===========================================
+
+CREATE TABLE tbTest (
+sn int NOT NULL auto_increment,
+type varchar(256) not null,
+shop varchar(256) not null,
+primary key (sn)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+===========================================
+
+
+
+        
+5、参考
+（1）linux下使用yum安装mysql
+（2）设置MySQL开机自动启动的方法
+（3）报错:1130-host ... is not allowed to connect to this MySql server 开放mysql远程连接 不使用localhost
+
+6、MySQL常用命令    
+1. 设置mysql用户名和密码
+/usr/bin/mysqladmin -u root password 'root'
+设置mysql的超级用户root，密码为root。
+
+2. 登录
+#mysql -h localhost -u root -p
+或
+# mysql -u root -p
+Enter password: root
+mysql>
+
+3. 查看数据库
+mysql> SHOW DATABASES;
+
+4. 使用数据库
+use test
+
+4. 查看数据表
+show tables;
+
+5. 创建数据库：
+create database Database_CI_Build_Info;
+
+5. 创建表
+mysql> CREATE TABLE pet (name VARCHAR(20), owner VARCHAR(20), species VARCHAR(20), sex CHAR(1), birth DATE, death DATE);
+
+create table phacode (userid varchar(50), version varchar(100), svnurl varchar(500), modifiles varchar(500));
+
+create table BuildInfo (SN int NOT NULL auto_increment, BuildNO int unsigned, BuildTime datetime, BoardType varchar(20), BuildResult varchar(50), EmployeeID varchar(50), FailedTimes int unsigned, PRIMARY KEY (SN) );
+
+create table EmployeeInfo ( EmployeeNum varchar(50), phone varchar(50), email varchar(50), isSended int, totalSendCnt int, namecn varchar(100), PRIMARY KEY (EmployeeNum) );
+
+
+6. 插入数据
+insert into pet values('Whistler', 'Gwen', 'bird', 'm', '2014-05-04', 'NULL');
+
+insert into phacode values('10087578', 'v3.3main', 'http://10.92.220.158', 'bracsproc.c');
+
+7. 删除数据
+delete from pet where name="Fluffy";
+
+删除所有数据：
+delete from pet;
+
+8. 修改记录
+update EmployeeInfo set employeeNum='00054319'
+
+update BuildInfo set BuildResult='failed', EmployeeID='10000001'  where SN=6;
+
+
+8. 从TXT导入数据
+load data local infile '/var/www/html/employee-name5.txt' into table EmployeeInfo;
+
+load data local infile '/home/admin/BuildInfo2.txt' into table BuildInfo;
+
+
+9. 统计各种单板出现的次数
+select BoardType, count(*) as cnt from BuildInfo group by BoardType;
+
+统计失败和成功的次数
+select BuildResult, count(*) as Times from BuildInfo group by BuildResult;
+
+
+10. select嵌套
+select SN from BuildInfo where BuildResult='failed';
+
+select * from BuildInfo where BoardType='CCE1' and SN in (select SN from BuildInfo where BuildResult='failed');
+
+select * from BuildInfo where BoardType='BPL' and SN in (select SN from BuildInfo where BuildResult='failed');
+
+统计各单板失败次数，并按降序排序(ASC|DESC)：
+select BoardType, count(*) as FailedTimes from BuildInfo where BuildResult='failed' group by BoardType order by FailedTimes DESC;
+
+
+
+12. 找出值最大的那条记录
+
+下面这2条在mysql都OK：
+select buildNo, BoardType, continuousFailedTimes from build_info order by continuousFailedTimes desc limit 0,3;
+select buildNo, BoardType, continuousFailedTimes from build_info order by continuousFailedTimes desc limit 0,3;
+
+select * from build_info where continuousFailedTimes in (select max(continuousFailedTimes) from build_info);
+
+原型为：
+select * from TABLE order by A desc limit 0,1;
+SELECT * FROM TABLE WHERE A IN (SELECT MAX(A) FROM TABLE);
+
+
+13. 访问二级CI数据库：
+mysql -h 10.92.203.58 -u root -p
+数据库IP及用户名密码：
+IP: 10.92.203.58
+用户名: root
+密码: bbu2ci
+数据库: ci
+表: build_info
+
+https://10.89.168.133:8443/svn/Support_SW_Platform_Dept/ci-sh
+
+文件 "ciMySql.py"
+from ciMySql import MySqlDB
+
+
+
+14. Python访问MySQL数据库
+
+import MySQLdb
+
+conn   = MySQLdb.connect( 'localhost', 'root', 'root', 'DB_MakeSWV' )  # 建立连接，参数分别是：主机IP，MySQL用户名，密码，数据库名
+cursor = conn.cursor()  # 定义光标
+
+sql = "select SN, VersionName, SvnUrl from VersionInfo;"
+cursor.execute(sql)  # 执行SQL语句
+data = cursor.fetchall()  # 获得查询结果
+print data
+
+cursor.close()  # 释放资源
+conn.close()  # 释放资源
+
+
+15. 创建表 compile_stt
+
+create table compile_stt ( id SERIAL, buildTime datetime, compileResult int(1), date date, time time );
+
+create table compile_daylist (id SERIAL, date date, totalCompileNum int unsigned, successNum int unsigned, failedNum int unsigned, successPercent int unsigned );
+
+load data local infile '/var/www/html/data2.txt' into table compile_stt;
+
+insert into compile_daylist values( 'NULL', '2015-09-11', '2', '1', '1', '50' );
+
+
+16. 将datetime转换成date
+select * from table where left(mydate,10)<2002-12-11
+
+17. 只取HH:MM格式
+select left(time, 5) from compile_stt;
+
+
+
+
+
+
+
+
+==============================================
+二，linux下使用yum安装mysql
+http://www.2cto.com/database/201207/141878.html
+
+1、安装
+查看有没有安装过：
+          yum list installed mysql*
+          rpm -qa | grep mysql*
+ 
+查看有没有安装包：
+          yum list mysql*
+ 
+安装mysql客户端：
+          yum install mysql
+ 
+安装mysql 服务器端：
+          yum install mysql-server
+ 
+          yum install mysql-devel
+  www.2cto.com  
+2、启动&&停止
+ 
+数据库字符集设置
+          mysql配置文件/etc/my.cnf中加入default-character-set=utf8
+ 
+启动mysql服务：
+          service mysqld start或者/etc/init.d/mysqld start
+开机启动：
+          chkconfig -add mysqld，查看开机启动设置是否成功chkconfig --list | grep mysql*
+ 
+          mysqld             0:关闭    1:关闭    2:启用    3:启用    4:启用    5:启用    6:关闭
+停止：
+          service mysqld stop
+2、登录
+ 
+创建root管理员：
+          mysqladmin -u root password 123456
+  www.2cto.com  
+登录：
+          mysql -u root -p输入密码即可。
+忘记密码：
+          service mysqld stop
+ 
+          mysqld_safe --user=root --skip-grant-tables
+ 
+          mysql -u root
+ 
+          use mysql
+ 
+          update user set password=password("new_pass") where user="root";
+ 
+          flush privileges;  
+ 
+3、远程访问
+ 开放防火墙的端口号
+mysql增加权限：mysql库中的user表新增一条记录host为“%”，user为“root”。
+4、Linux MySQL的几个重要目录
+  www.2cto.com  
+数据库目录
+         /var/lib/mysql/
+配置文件
+         /usr/share /mysql（mysql.server命令及配置文件）
+相关命令
+         /usr/bin（mysqladmin mysqldump等命令）
+启动脚本
+         /etc/rc.d/init.d/（启动脚本文件mysql的目录）
+
+?
+
+2015/12/24 下午03:09
+
+?
+
+主页顶部注销 帮助

@@ -1,0 +1,106 @@
+
+Ubuntu下安装Golang
+
+*********************************************************
+ubuntu有以下方式切换到root身份。
+
+sudo+命令，输入当前用户密码后以root权限执行命令，有时间限制且仅限当前命令。
+sudo -i，输入当前用户密码后以root权限登录shell，无时间限制。使用exit或logout退出。
+su，输入root账户的密码后切换到root身份，无时间限制。su 用户名切换回其它用户。
+sudo su，效果同su，只是不需要root的密码，而需要当前用户的密码。
+***********************************************************
+
+1. 安装Golang包
+sudo apt-get install golang
+
+
+2. 配置Golang参数
+首先创建目录 /home/gocode。
+/*
+    mkdir 目录名        （新建一个文件夹，文件夹在Linux系统中叫做“目录”）
+
+　　touch 文件名        （新建一个空文件）
+
+ 
+
+　　rmdir 目录名        （删除一个空文件夹，文件夹里有内容则不可用）
+
+　　rm -rf 非空目录名 （删除一个包含文件的文件夹）
+
+　　rm 文件名 文件名 （删除多个文件）
+
+ 
+
+　　cp 文件名 目标路径（拷贝一个文件到目标路径，如cp hserver /opt/hqueue）
+
+　　cp -i　　　　　　  （拷贝，同名文件存在时，输出 [yes/no] 询问是否执行）
+
+　　cp -f　　　　　　  （强制复制文件，如有同名不询问）
+*/
+
+
+然后修改~/.bashrc文件，在末尾加上下面两行：
+GOPATH=/home/gocode
+export GOPATH
+
+/***************************************
+在/opt/hello/world.txt文件中增加一行  hello linux world !
+方法一：
+
+命令是：vi，vim
+vi 编辑器，相当于记事本，有编辑功能，但较弱
+vim 复杂的编辑器，相当于windows的 editplus, notepad++ 等
+------------------------
+步骤：
+1、执行 vi world.txt  进入编辑器（默认命令模式），
+2、点击a或i进入编辑模式，敲入内容：hello linux world !
+3、然后按键盘上的esc键退出编辑模式（进入到命令模式），
+4、最后敲冒号：，
+5、再敲wq保存并退出。
+-------
+wq解释为：write quite
+不想保存，q
+强制退出 q!
+//q!不修改文件强行退出。q退出文件。wq保存并退出。
+*****************************************/
+
+最后然后退出重新登录。
+/*******************************
+
+-k：并不真正关机，只是发出警告信息给所有用户
+-r：关机后立即重新启动
+-h：关机后不重新启动
+-f：快速关机，重启动时跳过fsck
+-n：快速关机，不经过init程序
+-c：取消一个已经运行的shutdown[-time]：设定关机前的时间
+例：立即关闭系统 shutdown –h now
+重启shutdown –r now
+shutdown -r now ： 表示现在重启计算机！
+另一种重启方式就是输入： reboot   也表示重启！
+**********************/
+3. 测试Golang是否能正常使用
+下载一个Golang的开发包：
+sudo apt-get install -y git
+sudo go get github.com/tidwall/gjson
+//上面代码如果是root用户登录执行时就不要带sudo了。不然会出错的。
+然后查看/home/gocode目录下是否新增了pkg和src目录。
+
+
+4. 编译一个示例代码
+在/home/tmp下生成文件test1.go如下：
+package main 
+
+import (
+  "fmt"
+)
+
+func main() {
+  fmt.Println("aaab")
+}
+
+运行该代码：
+go run test1.go
+如何看到打印出字符串，就说明Golang工作正常。
+
+
+

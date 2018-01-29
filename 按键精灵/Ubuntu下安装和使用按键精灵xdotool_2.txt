@@ -1,0 +1,86 @@
+
+
+Ubuntu下安装xdotool
+
+
+重要：如果以VNC远程登录来使用xdotool，则必须以Xvnc的方式启动VNC server。否则xdotool的许多功能无法使用。
+
+
+1. 安装xdotool
+输入以下命令：
+sudo apt-get install xdotool
+
+软件首页：http://www.semicomplete.com/projects/xdotool/
+
+
+2. 示例脚本
+在ubuntu的桌面环境的x-terminal中执行一个shell脚本，脚本内容如下：
+
+# 脚本功能：将鼠标移动到指定位置并双击打开
+xdotool mousemove 820 558
+xdotool click 1
+xdotool click 1
+
+
+3. 获取屏幕上某个位置的坐标
+在ubuntu桌面环境的X-terminal中下执行如下命令：
+watch -n 2 xdotool getmouselocation
+
+然后手动将鼠标移动到指定位置，并保持2秒以上，就可以在shell窗口中看到该位置的x, y坐标了。
+
+
+4. 若干基本用法
+
+xdotool mousemove x y
+
+将鼠标移动到在屏幕上特定的X和Y坐标位置
+
+xdotool click 1
+
+点击鼠标左键，1表示左键，2表示中键，3表示右键。
+
+xdotool key ctrl+l
+
+同时按下ctrl和l键
+
+更多命令详解请输入：man xdotool
+
+这个工具没有内置延时和循环功能。不过linux下提倡的就是一个软件做一件事，这个功能只要稍微组合一下就能实现了。
+
+举个例子：
+
+如果要鼠标每隔10秒点击左键一次
+
+我们可以用终端下的watch命令组合实现
+
+watch -n 10 xdotool click 1
+
+====================
+
+
+ubuntu下安装方法
+输入以下命令：
+sudo apt-get install xdotool
+
+获取鼠标坐标
+
+xdotool getmouselocation
+
+findclient: 54526281
+x:871 y:542 screen:0 window:54526281
+
+ 
+
+写一个脚本模拟鼠标点击
+
+#!/bin/bash
+while (true)
+do
+xdotool mousemove 704 301; xdotool click 1; sleep 2
+xdotool mousemove 865 208; xdotool click 1; sleep 2
+done
+
+
+
+
+

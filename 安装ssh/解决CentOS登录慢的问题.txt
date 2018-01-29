@@ -1,0 +1,21 @@
+
+
+解决CentOS登录慢的问题
+
+
+
+故障现象：在没有连通外网的情况下，ssh登陆centos很慢
+
+故障原因：sshd默认开启了DNS解析和GSS认证
+
+解决方法：关闭DNS解析和GSS认证
+
+vi /etc/ssh/sshd_config
+注意：不是ssh_config文件，容易搞混
+
+1。 找到 UseDNS这一行，取消注释并修改为 UseDNS no
+2。 找到 GSSAPIAuthentication yes 这一行，更改为  GSSAPIAuthentication no
+3。 service sshd restart
+
+此时重新连接centos，一切顺利。
+

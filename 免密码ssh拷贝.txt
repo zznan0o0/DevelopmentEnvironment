@@ -1,0 +1,33 @@
+
+
+linux免密码ssh拷贝
+
+
+1。首先生成ssh key
+ssh-keygen -t rsa
+注意：一路回车
+
+查看是否生成了key:
+ll ~/.ssh
+-rw------- 1 user user 1675 Jan 27 09:26 id_rsa
+-rw-r--r-- 1 user user  408 Jan 27 09:26 id_rsa.pub
+其中id_rsa文件是私钥，id_rsa.pub是公钥。
+
+
+2。将自己的SSH公钥上传到对方的机器
+ssh-copy-id user@192.168.10.124
+
+
+3。测试是否可以免密码ssh登录和scp远程拷贝
+ssh user@192.168.10.124
+
+
+
+
+
+
+
+
+
+
+

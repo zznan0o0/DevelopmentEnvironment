@@ -1,0 +1,25 @@
+
+本文件是配置3D建模环境
+
+所用技术如下：
+
+系统：
+
+用到两个服务器
+1、web服务器->CentOS 6.5 64bits
+2、解析服务器->Ubuntu 16.04 LTS 64bits（不能用root登录，先用用户登录再切换root用户）
+
+CentOS：
+1、threeJS、bootstrap、jQuery、HTML前段进行用户交互
+2、laravel5是web服务器
+3、mysql  Ver 14.14 Distrib 5.7.20用户登录注册、项目信息
+
+Ubuntu：
+1、go用来调度代码
+2、Python生成图片和切割图片
+3、Teigha 将dwg文件转成dxf文件
+4、Node.js将dxf转成json
+
+
+1、go整个功能模块代码调度
+2、Python数据处理

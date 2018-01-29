@@ -1,0 +1,16 @@
+
+
+如何备份Gitlab
+
+http://blog.csdn.net/ouyang_peng/article/details/77070977
+
+用root用户执行命令：
+gitlab-rake gitlab:backup:create
+
+会在/var/opt/gitlab/backups目录下创建一个名称类似为1502357536_2017_08_10_9.4.3_gitlab_backup.tar的压缩包。
+
+
+
+
+
+

@@ -1,0 +1,159 @@
+
+php 上传文件大小控制配置文件中设置的
+
+http://www.cnblogs.com/zonglonglong/p/5898885.html
+
+
+
+Linux 环境下的修改方法 
+================================================================
+修改/etc/php.ini
+找到 File Uploadsh区域修改以下几个参数： 
+file_uploads = on ;是否允许通过HTTP上传文件的开关。默认为ON即是开 
+upload_tmp_dir ;文件上传至服务器上存储临时文件的地方，如果没指定就会用系统默认的临时文件夹(moodle可以不改)
+upload_max_filesize = 8m ;允许上传文件大小的最大值.
+
+找到 Data Handling区域，
+修改 post_max_size = 8m ;指通过表单POST给PHP的所能接收的最大值，包括表单里的所有值。默认为8M
+设上述四个参数后，上传小于8M的文件一般不成问题。
+
+但如果上传大于8M的文件，只还得设置以下参数：
+在Resource Limits 区域: 
+max_execution_time = 600 ;每个PHP页面运行的最大时间值(秒)，默认30秒 
+max_input_time = 600 ;每个PHP页面接收数据所需的最大时间，默认60秒 
+memory_limit = 8m ;每个PHP页面所吃掉的最大内存，默认8M
+
+重启php
+***************************************************
+PHP重启命令：service php-fpm restart
+
+
+
+
+关闭PHP
+killall php-fpm 
+php重启
+/usr/local/php/sbin/php-fpm &
+关闭nginx
+/usr/local/nginx/sbin/nginx -s stop   //关闭服务器
+重启nginx
+/usr/local/nginx/sbin/nginx  开启服务器
+
+
+添加PHP-FPM服务
+
+vi /usr/local/php-5.6.3/etc/php-fpm.conf   
+
+配置php-fpm.conf（vi /usr/local/php-5.6.3/etc/php-fpm.conf）,将pid（;pid = run/php-fpm.pid）前的;去掉。
+因为编译安装php的，所以会在php目录生成很多二进制文件，找到init.d.php-fpm，拷贝到init.d下。
+cp /usr/local/src/php-5.6.3/sapi/fpm/init.d.php-fpm /etc/init.d/php-fpm
+设置权限，并添加服务
+chmod +x /etc/init.d/php-fpm
+chkconfig --add php-fpm
+以后可以使用如下命令管理php-fpm了
+service php-fpm start
+service php-fpm stop
+service php-fpm restart
+service php-fpm reload
+***************************************************
+如果是apache需要修改
+/etc/httpd/conf/httpd.conf
+在httpd.conf 加一句（随便加哪都行） LimitRequestBody 10485760（这个数字多大都可以，我设的上限是10M=10*1024*1024）
+重启Apache
+******************************************************
+基本的操作方法：
+本文假设你的apahce安装目录为/usr/local/apache2，这些方法适合任何情况
+
+apahce启动命令：
+推荐/usr/local/apache2/bin/apachectl start apaceh启动
+
+apache停止命令
+/usr/local/apache2/bin/apachectl stop   停止
+
+apache重新启动命令：
+/usr/local/apache2/bin/apachectl restart 重启
+
+要在重启 Apache 服务器时不中断当前的连接，则应运行：
+
+/usr/local/sbin/apachectl graceful
+
+如果apache安装成为linux的服务的话，可以用以下命令操作：
+
+service httpd start 启动
+
+service httpd restart 重新启动
+
+service httpd stop 停止服务
+
+ 
+
+Linux系统为Ubuntu
+
+一、Start Apache 2 Server /启动apache服务
+
+# /etc/init.d/apache2 start
+or
+$ sudo /etc/init.d/apache2 start
+
+二、 Restart Apache 2 Server /重启apache服务
+
+# /etc/init.d/apache2 restart
+or
+$ sudo /etc/init.d/apache2 restart
+
+三、Stop Apache 2 Server /停止apache服务
+
+# /etc/init.d/apache2 stop
+or
+$ sudo /etc/init.d/apache2 stop
+*******************************************************
+
+JS上传大文件 - 修改配置
+
+边争光
+争光
+http://www.jb51.net/article/38599.htm
+边争光
+争光
+http://blog.csdn.net/gb4215287/article/details/50709246
+边争光
+争光
+http://www.cnblogs.com/zonglonglong/p/5898885.html
+
+
+
+
+
+
+Windows 环境下的修改方法 
+================================================================
+第一步：修改在php5下POST文件大小的限制
+
+1.编修/etc/php.ini
+
+找到：max_execution_time = 30 ，这个是每个脚本运行的最长时间，单位秒，修改为：
+max_execution_time = 150
+
+找到：max_input_time = 60，这是每个脚本可以消耗的时间，单位也是秒，修改为：
+max_input_time = 300
+
+找到：memory_limit = 128M，这个是脚本运行最大消耗的内存，根据你的需求更改数值，这里修改为：
+memory_limit = 256M
+
+找到：post_max_size = 8M，表单提交最大数据为 8M，此项不是限制上传单个文件的大小,而是针对整个表单的提交数据进行限制的。限制范围包括表单提交的所有内容.例如:发表贴子时,贴子标题,内容,附件等…这里修改为：
+post_max_size = 20M
+
+找到：upload_max_filesize = 2M ，上载文件的最大许可大小 ，修改为：
+upload_max_filesize = 10M
+
+
+第二步： Apache环境中的档案上传大小控制
+
+修改位于Apahce目录下的/etc/httpd/conf/httpd.conf
+添加下面内容:
+LimitRequestBody 10485760    
+即10M=10*1024*1024，有的文章中提到应改为 600000000
+
+重新启动apache，就可以在设置里看到你要的大小。
+# service httpd restart
+
