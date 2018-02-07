@@ -1,0 +1,7 @@
+CREATE TABLE tb_raw_tables (
+sn SERIAL PRIMARY KEY,
+project_id VARCHAR(256),
+file_id VARCHAR(256),
+viewPort json,
+lineType json,
+layer json);

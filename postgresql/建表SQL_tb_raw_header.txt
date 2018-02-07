@@ -1,0 +1,6 @@
+CREATE TABLE tb_raw_header (
+sn SERIAL PRIMARY KEY,
+project_id VARCHAR(256),
+file_id VARCHAR(256),
+key VARCHAR(256),
+value VARCHAR(256));

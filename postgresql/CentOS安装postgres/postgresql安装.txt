@@ -1,0 +1,72 @@
+系统版本：centos6.5 
+安装方式：yum安装 
+postgresql版本：9.4 
+1、查看先前是否已经安装过postgresql 
+命令：# rpm -qa|grep postgres
+
+2、如果先前安装过低版本的postgres可以通过rpm -e 卸载
+
+3、如果使用默认yum 安装的话，会安装较低版本的PostgreSQL 8.4，如果想安装版本较高的postgresql需要使用PostgreSQL Yum Repository 来安装最新版本的PostgreSQL。
+
+4、添加PostgreSQL yum repository 
+命令：#rpm -Uvh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm升级一个包
+rpm -ivh http://yum.postgresql.org/9.4/redhat/rhel-6-x86_64/pgdg-centos94-9.4-1.noarch.rpm下载一个包
+
+
+5、安装新版本PostgreSQL 
+命令：#yum install postgresql94-server postgresql94-contrib
+
+6、查看安装 
+命令：# rpm -qa|grep postgres,执行结果如下： 
+postgresql94-libs-9.4.1-1PGDG.rhel7.x86_64 
+postgresql94-server-9.4.1-1PGDG.rhel7.x86_64 
+postgresql94-9.4.1-1PGDG.rhel7.x86_64 
+postgresql94-contrib-9.4.1-1PGDG.rhel7.x86_64
+
+7、初始化数据库之前，可以修改配置文件更改数据的存储路径（可选,默认为/var/lib/postgres） 
+方法：vim /etc/init.d/postgresql-9.4 
+更改为： 
+PGDATA=/data/pgsql/9.4/data（数据文件路径） 
+PGLOG=/data/pgsql/9.4/pgstartup.log（日志文件路径） 
+PGUPLOG=/data/pgsql/$PGMAJORVERSION/PGUPGRADE.log
+
+8、如果是已经初始化数据库，想更改数据路径可将/var/lib/postgres下的data等文件删除(前提是旧的数据没有用，可以删除)，然后重新初始化。
+
+9、初始化数据库 
+service postgresql-9.4 initdb
+
+10、启动数据库 
+/etc/init.d/postgresql-9.4 start 
+或service postgresql-9.4 start
+
+11、设置postgresql服务开机自启动 
+chkconfig postgresql-9.4 on
+
+12、修改PostgreSQL 数据库用户postgres的密码(注意不是linux系统帐号)PostgreSQL 数据库默认会创建一个postgres的数据库用户作为数据库的管理员，默认密码为空，我们需要修改为指定的密码，这里设定为’postgres’。 
+#su - postgres 
+$ psql 
+#ALTER USER postgres WITH PASSWORD ‘postgres’; 
+#select * from pg_shadow ;
+
+13、修改linux 系统用户postgres 的密码 
+PostgreSQL 数据库默认会创建一个linux 系统用户postgres，通过passwd 命令设置系统用户的密码为postgres。 
+#passwd postgres
+
+14、修改数据库配置实现远程访问 
+添加可访问网段 
+vim /data/pgsql/9.4/data/pg_hba.conf (允许以下网段网段ip登录 ) 
+host all all 192.168.0.0/24 md5 
+更改监听地址 
+vim /data/pgsql/9.4/data/postgresql.conf （监听更改为*） 
+listen_addresses = ‘*’
+
+15、重启postgresql服务使配置生效 
+service postgresql-9.4 restart
+
+16、更改防火墙配置 
+vi /etc/sysconfig/iptables 
+并添加以下行 
+-A INPUT -m state –state NEW -m tcp -p tcp –dport 5432 -j ACCEPT 
+-A INPUT -m state –state NEW -m tcp -p tcp –dport 80 -j ACCEPT 
+退出并保存文件。重启iptables服务： 
+service iptables restart

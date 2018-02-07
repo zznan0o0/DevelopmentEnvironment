@@ -1,4 +1,4 @@
-新装一台ubuntu
+﻿新装一台ubuntu
 1.首先安装openssh-server
     sudo apt-get install openssh-server
 2.修改允许root用户远程登录
