@@ -1,0 +1,45 @@
+
+
+Ubuntu下安装Mysql
+
+
+错误：
+# mysql -uroot -p
+Enter password: 
+ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run/mysqld/mysqld.sock' (2)
+
+
+========================
+
+0. sudo apt-get update
+1. sudo apt-get install mysql-server
+2. sudo apt-get install mysql-client
+3. sudo apt-get install libmysqlclient-dev
+4. sudo /etc/init.d/mysql restart
+5. mysql -uroot -p
+6. 关于mysql的密码，在安装的时候，会弹出图形界面，让输入mysql中root用户的密码。
+
+7.查看版本：mysql --version
+
+设置字符集utf8（一定要在创建数据库之前）
+打开mysqld.cnf 文件，在lc-messages-dir = /usr/share/mysql 语句后添加 character-set-server=utf8 语句
+
+在终端输入 sudo vim /etc/mysql/conf.d/mysql.cnf 命令打开mysql.cnf配置文件，如图添加代码：default-character-set=utf8 
+
+查看字符集：SHOW VARIABLES LIKE 'char%';
+
+8.重启mysql：/etc/init.d/mysql restart
+
+
+============================
+完全卸载mysql
+sudo apt purge mysql-*
+
+sudo rm -rf /etc/mysql/ /var/lib/mysql
+
+sudo apt autoremove
+
+sudo apt autoclean
+
+
+

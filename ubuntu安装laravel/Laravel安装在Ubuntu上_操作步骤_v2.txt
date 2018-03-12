@@ -1,0 +1,94 @@
+
+Laravel安装在Ubuntu上_操作步骤
+
+https://www.hugeserver.com/kb/install-laravel5-php7-apache-ubuntu16/
+
+Linux version: Ubuntu 16.04 server 
+
+（开启虚拟机后，第一步要先看看能不能联网）
+首先把我的网络连接改成NAT模式
+
+1. install apache
+sudo apt-get -y update
+sudo apt-get install -y apache2
+sudo systemctl start apache2
+sudo /lib/systemd/systemd-sysv-install enable apache2
+
+2. install PHP 7.1
+sudo apt-get install -y python-software-properties
+sudo apt install -y software-properties-common
+sudo add-apt-repository ppa:ondrej/php
+sudo apt-get -y update
+sudo apt install -y php7.1 php7.1-xml php7.1-mbstring php7.1-mysql php7.1-json php7.1-curl php7.1-cli php7.1-common php7.1-mcrypt php7.1-gd libapache2-mod-php7.1 php7.1-zip
+
+3. install composer
+sudo apt install -y curl
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/bin/composer
+
+配置composer的国内镜像，后续安装Laravel时下载速度很快
+===============================================
+composer全量中国镜像：http://pkg.phpcomposer.com/。
+配置方法：推荐以“修改 composer 的配置文件”方式配置:
+composer config -g repo.packagist composer https://packagist.phpcomposer.com
+
+cd ~/Downloads
+composer create-project laravel/laravel laravel5 5.1
+sudo mv ~/Downloads/laravel5 /var/www/html
+注意：不能用root用户创建项目，也不能直接写到/var/www/html目录下。可以先创建到/home/user/download目录下，再移动到/var/www/html目录下。
+
+
+4. 配置Apache
+vim /etc/apache2/sites-available/000-default.conf
+
+将这一行：
+DocumentRoot "/var/www/html"
+修改为：
+DocumentRoot "/var/www/html/laravel5/public"
+
+增加下面一段代码：
+<Directory /var/www/html/laravel5>
+		Options Indexes FollowSymLinks
+		AllowOverride All
+		Require all granted
+		Order allow,deny
+	    Allow from all
+</Directory>
+
+修改，将<Directory>的AllowOverride None修改为AllowOverride All
+
+
+vim /etc/apache2/apache2.conf，将<Directory>的AllowOverride None改为AllowOverride All；
+
+增加下面一段代码
+<Directory /var/www/html/laravel5>
+	Options Indexes FollowSymLinks
+	AllowOverride All
+	Require all granted
+	Order allow,deny
+    Allow from all
+</Directory>
+
+开启对.htaccess文件的支持（开启rewrite模块）：
+sudo a2enmod rewrite
+
+关闭CSRF功能，否则post方法会失败
+============================================
+打开文件：app\Http\Kernel.php， 把这行注释掉：
+'App\Http\Middleware\VerifyCsrfToken'
+
+重启Apache:
+service apache2 restart
+
+5. 打开Laravel目录的权限
+sudo chown -R www-data:www-data laravel/
+sudo chmod -R 775 laravel/storage/
+
+6. 测试Laravel
+在浏览器中输入服务器的IP，如果能看到Laravel的欢迎页说明安装成功。
+
+7. 验证Laravel的版本
+cd /var/www/html/laravel5
+php artisan -V
+
+

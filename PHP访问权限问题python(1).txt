@@ -1,0 +1,31 @@
+
+
+
+
+
+php用shell_exec()调用python没有反应，但是用ls有返回值。
+
+
+说用php没有权限调用python。导致这也原因是用root用户安装python
+
+
+解决办法：
+1、创建软连接
+先删除原有的文件
+rm   /usr/bin/python
+在创建软连接
+ln -sv  /usr/local/bin/python3.5 /usr/bin/python
+
+上面软连接成为python，在php执行exec()函数是python3改为python才可以。
+
+
+
+给apache放权限
+chown -R apache:apache test2.py
+
+
+
+
+
+
+PHP调用 python3 返回太多数据也不行。
