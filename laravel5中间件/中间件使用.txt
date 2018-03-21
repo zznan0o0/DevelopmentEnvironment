@@ -1,0 +1,14 @@
+php artisan make:middleware Test(中间件名)
+
+生成文件在app/Http/Middleware下的Test
+在handle函数中写过滤代码
+
+
+在app/http/Kernel.php中
+$routeMiddleware里
+添加
+'test' => \App\Http\Middleware\Test::class,
+
+调用中间件
+Route::get('/test', 'Test@test')->middleware('test', 'test2', 'test3');
+

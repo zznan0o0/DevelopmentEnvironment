@@ -1,4 +1,4 @@
-
+﻿
 Laravel安装在Ubuntu上_操作步骤
 
 https://www.hugeserver.com/kb/install-laravel5-php7-apache-ubuntu16/
@@ -34,6 +34,7 @@ composer config -g repo.packagist composer https://packagist.phpcomposer.com
 
 cd ~/Downloads
 composer create-project laravel/laravel laravel5 5.1
+composer create-project laravel/laravel laravel5 5.3.*
 sudo mv ~/Downloads/laravel5 /var/www/html
 注意：不能用root用户创建项目，也不能直接写到/var/www/html目录下。可以先创建到/home/user/download目录下，再移动到/var/www/html目录下。
 
