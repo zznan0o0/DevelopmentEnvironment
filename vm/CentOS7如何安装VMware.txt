@@ -1,0 +1,89 @@
+﻿
+CentOS 7如何安装VMware
+
+
+Linux: CentOS 7, 64 bits
+VMware: VMware-Workstation-Full-14.0.0-6661328.x86_64
+
+
+因为CentOS7默认安装后不打开网卡，也没有图形界面。因此需要修改配置。
+
+
+启动网卡连接
+=====================
+用ifconfig查看网卡信息，记下网卡名称，例如ens33。
+进入/etc/sysconfig/network-scripts目录.
+修改该网卡的配置：vi ifcfg-ens33
+找到ONBOOT="no"选项修改为"yes"：
+ONBOOT="yes"
+然后reboot机器。
+
+
+安装图形界面
+=====================
+安装Gnome系列软件
+# yum groupinstall "GNOME Desktop" "Graphical Administration Tools"
+注：第一次使用yum会提示无法找到yum源。最好机器能通过代理连到国外网站，更新yum源。
+
+
+修改启动模式为图形模式
+=====================
+获取当前系统启动模式
+# systemctl get-default
+ 
+由命令行模式更改为图形界面模式
+# systemctl set-default graphical.target
+
+重启机器
+# reboot
+
+
+
+安装VMware 14 Workstation Pro
+=====================
+chmod +x VMware-Workstation-Full-14.0.0-6661328.x86_64.bundle
+./VMware-Workstation-Full-14.0.0-6661328.x86_64.bundle
+输入下列的一个序列号即可：
+CG54H-D8D0H-H8DHY-C6X7X-N2KG6
+ZC3WK-AFXEK-488JP-A7MQX-XL8YF
+AC5XK-0ZD4H-088HP-9NQZV-ZG2R4
+ZC5XK-A6E0M-080XQ-04ZZG-YF08D
+
+ZY5H0-D3Y8K-M89EZ-AYPEG-MYUA8
+
+
+
+解决gcc的问题
+=====================
+启动VMware时，会报错：
+VMware, CentOS7, A compatible version of gcc was not found.
+
+解决办法：
+yum groupinstall 'Development Tools'
+
+
+
+卸载VMware
+=====================
+vmware-installer -u vmware-workstation
+
+然后重新安装VMware
+
+
+
+C头文件错误
+=====================
+Error: 
+C header files matching your running kernel were not found. Refer to your distribution`s documentation for installation instructions.
+
+解决办法：升级kernel
+# yum install "kernel-devel-uname-r == $(uname -r)"
+
+
+
+然后打开VMware workstation
+=====================
+自动升级完kernel后，成功打开VMware界面。
+
+
+

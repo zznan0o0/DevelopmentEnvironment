@@ -1,0 +1,141 @@
+
+用VNC登录linux桌面
+
+
+用windows远程连接linux桌面（使用tightvnc或者tigervnc) 
+http://blog.chinaunix.net/uid-26642180-id-3135447.html
+快跑蚂蚁
+
+
+关键点：
+========================================================
+
+1. 本文档基于的环境
+Linux版本：Red Hat Enterprise Linux Server release 6.1 (Santiago)
+硬件: x86_64 CPU
+
+
+2. 安装VNC软件包
+# rpm -qa | grep vnc
+tigervnc-server-1.0.90-0.15.20110314svn4359.el6.x86_64
+tigervnc-1.0.90-0.15.20110314svn4359.el6.x86_64
+
+如果没有安装，用下面的命令安装软件包：
+yum install tigervnc-server
+yum install tigervnc
+
+
+3. 设定可以登录VNC的用户
+修改文件/etc/sysconfig/vncservers为如下内容：
+VNCSERVERS="1:root"
+VNCSERVERARGS[1]="-geometry 800x600 -nolisten tcp -localhost"
+
+表示可以登录VNC的用户为root，登录后VNC窗口大小为800*600。
+
+
+4. 设置VNC登录密码
+# vncpasswd
+设置用户的vnc登录密码。
+
+
+5. 设置VNC登录后的桌面系统
+以root用户为例，把文件/root/.vnc/xstartup最后一行修改为：
+#twm &
+gnome -session &
+
+表示VNC登录后显示Gnome桌面，不然连接后只出现一个终端编辑器窗口。
+RedHat默认用Gnome桌面，这里不能设置成"startkde &"，除非你已经手动安装了KDE桌面，否则VNC桌面不能正常工作。
+
+
+6. 关闭防火墙
+# service iptables stop
+如果不关防火墙，会出现无法登录的现象。
+
+
+7. 启动VNC服务
+# vncserver
+New 'bogon:1 (admin)' desktop is bogon:1
+Starting applications specified in /root/.vnc/xstartup
+Log file is /root/.vnc/bogon:1.log
+
+"bogon:1"表示VNC服务器启动在第2个端口，则从windows登陆时端口号为5900+1=5901。
+用“service vncserver start”或"/etc/init.d/vncserver start"虽然提示服务启动成功，但用VNCViewer无法登录。
+
+
+8. 在Windows中用VNC Viewer登录
+IP填写为:  192.168.1.102:5901
+如果VNC服务启动在第二个端口上，则登录时端口号为5902，以此类推。
+
+
+9. 停止VNC服务
+# service vncserver stop
+
+
+
+
+
+
+原文
+====================================
+
+用windows远程连接linux桌面（使用tightvnc或者tigervnc) 2012-03-16 10:13:46
+
+分类： LINUX
+
+一、安装tightvnc：
+1. tightvnc的安装在安装包中有详细的说明（README文件）
+首先你要确保linux已经安装jpeg和zlib库，
+
+2、编译
+执行如下两个命令：
+[root@localhost vnc_unixsrc]xmkmf 
+[root@localhost vnc_unixsrc]make World
+可分别在其下的四个目录中获得四个文件。第一个为静态库，后三个为x86平台的二进制执行程序。vncvviewer为x86-linux平台的client端程序。
+vncpasswd用于server侧建立密码，vncconnect为server和client二者连接之用。
+vnc_unixsrc/libvncauth/libvncauth.a 
+vnc_unixsrc/vncviewer/vncviewer
+vnc_unixsrc/vncpasswd/vncpasswd
+vnc_unixsrc/vncconnect/vncconnect
+
+下面的是编译server侧二进制程序
+[root@localhost Xvnc]#  cd Xvnc/
+[root@localhost Xvnc]# ./configure 
+[root@localhost Xvnc]# make
+
+得到二进制程序：
+vnc_unixsrc/Xvnc/programs/Xserver/Xvnc
+ 安装tightvnc
+将程序安装到已在PATH环境变量中的/root/bin下，manual手册则安装到/usr/share/man下
+[root@localhost vnc_unixsrc]./vncinstall /root/bin /usr/share/man
+
+用于Java环境（比如在浏览器中）下的Java字节码放到/root/bin/classes中
+[root@localhost vnc_unixsrc]mkdir -p /root/bin/classes
+[root@localhost vnc_unixsrc]cp classes/* /root/bin/classes/
+
+二、安装tigervnc
+    yum install tigervnc-server               这是服务端软件
+    yum install tigervnc                           这是客户端软件，安装完后，程序在“应用程序”->“Internet”->“TigerVNC Viewer”
+
+三、设置vnc服务端：
+    1、修改配置文件：vim /etc/sysconfig/vncservers
+    VNCSERVERS="1:root "
+    VNCSERVERARGS[1]="-geometry 800x600 -nolisten tcp -localhost"
+    注意：vnc默认的端口是从5900开始，所以如果以root用户登录的话，端口号就是5901了
+	
+    2、设置vnc连接密码：
+        必须先切换到某一用户环境下，才能使用vncpasswd命令来设置该用户的vnc连接密码。
+
+四、启动vnc服务：
+    1、/etc/init.d/vncserver start (stop reload restart等)
+    2、service vncserver start (stop restart等)
+    3、设置开机自动启动：chkconfig  vncserver on
+       (检查开机自动启动设置：chkconfig --list vncserver)
+
+五、连接vnc远程桌面：
+    在windows系统中，可使用“TigerVNC Viewer”客户端或者UltraVNC Viewer 客户端来连接远程桌面，两者的windows上的安装方法就不需要再介绍了吧，大家下载到安装文件后都会做的，你懂的！
+    点击“TigerVNC Viewer”客户端软件后，在"VNC Server:"栏输入需要连接的远程计算机的IP地址及相应的接口号，然后单击“OK”即可。
+
+注意：以root用户为例一定要修改/root/.vnc/xstartup文件,把最后一行 twm& 修改成"startkde &" 或者"gnome-session &"
+不然的话连接linux时只出现了一个终端编辑器窗口。
+
+终于搞定！
