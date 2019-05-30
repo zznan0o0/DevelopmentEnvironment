@@ -1,0 +1,35 @@
+apache2 
+
+apache2/sites-available/000-default.conf 文件
+ubuntu路径 /etc/apache2/sites-available/000-default.conf
+
+sudo vim /etc/apache2/sites-available/000-default.conf
+<VirtualHost>标签中加入
+  ......
+  imitRequestBody 0(没有大小限制)
+</VirtualHost>
+
+php7.1
+
+ubuntu 路径 sudo vim /etc/php/7.1/apache2/php.ini
+
+File Uploadsh区域
+file_uploads = on 允许上传
+upload_tmp_dir = 临时文件目录
+upload_max_filesize = 600M 上传文件大小
+
+
+Data Handling区域
+post_max_size = 600M 表单上传最大值
+
+Resource Limits 区域
+
+max_execution_time = 600 ;每个PHP页面运行的最大时间值(秒)，默认30秒 
+max_input_time = 600 ;每个PHP页面接收数据所需的最大时间，默认60秒 
+memory_limit = 1000m ;每个PHP页面所吃掉的最大内存，默认8M
+
+重启apache
+
+sudo service apache2 restart
+或者
+sudo /etc/init.d/apache2 restart

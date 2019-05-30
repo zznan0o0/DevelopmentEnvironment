@@ -1,0 +1,17 @@
+开启proxy proxy_http 模块
+1.a2enmod proxy
+2.a2enmod proxy_http
+
+3. vim 000-default.conf 添加转发设置
+
+NameVirtualHost *:80
+<VirtualHost *:80>
+    ServerName test2.atjubo.com
+    ProxyRequests Off
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    ProxyPass / http://0.0.0.0:8081/ 
+    ProxyPassReverse / http://0.0.0.0:8081/ 
+</VirtualHost>
