@@ -1,0 +1,100 @@
+
+sudo不用输密码_在Ubuntu中
+
+
+
+1. 修改/etc/sudoers
+注意：一定要以root用户进入并修改，如果是普通用户的话，修改完sudoers文件就不能执行sudo命令了。
+# chmod 770 /etc/sudoers
+
+vim /etc/sudoers
+删除这一行：
+%admin  ALL=(ALL) ALL
+
+在这一行"%sudo   ALL=(ALL:ALL) ALL"后面添加一行：
+%admin  ALL=(ALL) NOPASSWD:ALL
+# chmod 440 /etc/sudoers
+
+
+2. 将用户user添加进admin组
+sudo groupadd admin
+sudo usermod user -g admin
+
+
+3. 重启Ubuntu
+reboot
+重启之后，再执行sudo apt-get update就不需要输密码了。
+
+
+
+
+
+==============================
+https://askubuntu.com/questions/192050/how-to-run-sudo-command-with-no-password
+
+down vote
+I found that the most straight forward thing to do, in order to easily replicate this behavior across multiple servers, was the following:
+
+sudo visudo
+Change this line:
+
+# Members of the admin group may gain root privileges
+%admin  ALL=(ALL) ALL
+to this line:
+
+# Members of the admin group may gain root privileges
+%admin  ALL=(ALL) NOPASSWD:ALL
+
+And move it under this line:
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+you should now have this:
+
+# This file MUST be edited with the 'visudo' command as root.
+#
+# Please consider adding local content in /etc/sudoers.d/ instead of
+# directly modifying this file.
+#
+# See the man page for details on how to write a sudoers file.
+#
+
+Defaults        env_reset
+Defaults        mail_badpass
+Defaults        secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+
+# Allow members of group sudo to execute any command
+%sudo   ALL=(ALL:ALL) ALL
+
+# Members of the admin group may gain root privileges
+%admin  ALL=(ALL) NOPASSWD:ALL
+
+# See sudoers(5) for more information on "#include" directives:
+
+#includedir /etc/sudoers.d
+then for every user that needs sudo access WITH a password:
+
+sudo adduser <user> sudo
+and for every user that needs sudo access WITH NO password:
+
+sudo adduser <user> admin
+and finally, run this:
+
+sudo service sudo restart
+And that's it!
+
+Edit: You may have to add the admin group as I don't think it exists by default.
+
+sudo groupadd admin
+You can also add the deafult AWS ubuntu user to the admin group via this command:
+
+sudo usermod ubuntu -g admin
