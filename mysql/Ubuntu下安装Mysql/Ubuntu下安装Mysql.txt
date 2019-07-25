@@ -13,7 +13,7 @@ ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/var/run
 
 0. apt-get update
 1. apt-get install mysql-server
-2. apt-get isntall mysql-client
+2. apt-get install mysql-client
 3. apt-get install libmysqlclient-dev
 4. /etc/init.d/mysql restart
 5. mysql -uroot -p
