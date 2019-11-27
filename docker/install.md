@@ -32,6 +32,19 @@ $ sudo apt-get update
 7，安装docker
 如果想指定安装某一版本，可使用 sudo apt-get install docker-ce=<VERSION>  命令，把<VERSION>替换为具体版本即可。
 
+* 如果下不动使用阿里云 apt仓库
+
+如果你已经添加过官网的源 请在/etc/apt/sources.list 最后那几行删掉（有一个是那刚才添加的国外deb源 不然你每次apt update 都会爆一个蛋疼的错Failed to fetch https://apt.dockerproject.org/repo/dists/ubun），然后执行下面的阿里云安装源
+
+
+
+$ curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
+
+$ sudo add-apt-repository \
+     "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu \
+     $(lsb_release -cs) \
+     stable"
+
 以下命令没有指定版本，默认就会安装最新版
 
 $ sudo apt-get install docker-ce

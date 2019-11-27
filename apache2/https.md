@@ -30,9 +30,17 @@
         <FilesMatch "\.(cgi|shtml|phtml|php)$">
             SSLOptions +StdEnvVars
         </FilesMatch>
-        <Directory /usr/lib/cgi-bin>
+        <!-- <Directory /usr/lib/cgi-bin>
             SSLOptions +StdEnvVars
-        </Directory>
+        </Directory> -->
+        <Directory /home/wms/warehouse>
+				SSLOptions +StdEnvVars
+				Options Indexes FollowSymLinks
+				AllowOverride All
+				Require all granted
+				Order allow,deny
+				Allow from all
+		</Directory>
 
 
 
@@ -42,6 +50,35 @@
 a2enmod ssl
 service apache2 restart
 
-# 不知道有没用
 a2ensite default-ssl
 service apache2 reload
+
+
+
+<VirtualHost *:443>
+		ServerAdmin webmaster@localhost
+		ServerName s4.atjubo.com
+		ServerAlias s4.atjubo.com 
+		DocumentRoot /home/ia/www/laravel/public
+
+		ErrorLog ${APACHE_LOG_DIR}/error.log
+		CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+		SSLEngine on
+
+		SSLCertificateFile	/etc/apache2/ssl/server.crt
+		SSLCertificateKeyFile /etc/apache2/ssl/server.key
+
+		<FilesMatch "\.(cgi|shtml|phtml|php)$">
+				SSLOptions +StdEnvVars
+		</FilesMatch>
+		<Directory /home/ia/www/laravel>
+				SSLOptions +StdEnvVars
+				Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+        Order allow,deny
+        Allow from all
+		</Directory>
+
+	</VirtualHost>
