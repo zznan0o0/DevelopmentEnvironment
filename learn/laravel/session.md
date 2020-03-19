@@ -1,0 +1,1 @@
+dd(unserialize(Session::getHandler()->read(Session::getId())));
